@@ -1,0 +1,89 @@
+Synopsis
+
+Prerequisites => using promises
+
+sync operations
+	involve only processor with sequential execution of instructions
+	since no waiting involved, we get the result immediately
+	example: double usage
+
+async operations
+	involve other hardware like harddisk, network card, IPC
+	since we have to wait for other hardware to get the result, the result cannot be returned immediately
+	example: doubleAsync usage
+
+
+NodeJS implements async operations by
+	returning immediately with undefined
+	and then passing the desired value to a provided callback when it is available
+
+Ruby implements async operations by
+	actually waiting for the result and then resturning the result
+	processor is kept busy during this time by running other threads (context switching)
+
+The problem with async operations => high on IO low on processing
+How do we optimize the use of processor during IO operations
+1. context switching (has its own overhead)
+2. event loop
+
+how does multithreaded code look? sync-prog.js
+how does event-loop based code look? async-prog.js
+
+2 ways of handling async operations - Pros and Cons
+1. Multi threading (based on blocking system calls like read)
+Pros
+	sequential code within a thread so easier to understand (composition)
+Cons
+	locking required
+	less performant (context switching)
+
+
+read(1)
+wait if data not available
+
+
+2. Event loop (uses non blocking system calls like epoll)
+https://github.com/libuv/libuv
+Pros
+	locking not required (single thread)
+	best possible performance (epoll)
+Cons
+	non-sequential code execution within a single thread (difficult to maintain and reason about) (callback hell)
+
+
+Problem
+	1. Single thread (no locking required)
+	2. best possible performance (event loop or epoll syscall)
+	3. sequential code appearance (easier to maintain and reason about)
+
+
+
+
+Solution => Promises and Generators
+Callback hell -------Promises-------> chain ------- Generators -------> composition(sequential)
+
+
+
+
+Explain promise interface
+
+const p = new Promise((resolve, reject) => {
+	doubleAsync(3, (err, result) => {
+		if (err)
+			reject(err)
+		else
+			resolve(result)
+	})
+})
+p.then(x => x * x).then(console.log).then(undefined, e => { throw e })
+
+
+states, resolve, settle, reject, wrapper over a value, caching, chaining
+diff between returning and resolving
+chaining
+
+go through promise MDN API and see if it satisfies all properties and modify implementation
+
+
+
+
